@@ -3,10 +3,13 @@ import Card from "./Card"
 import { useState,useEffect } from "react";
 import { data } from "autoprefixer";
 import Shimmer from "./Shimmer"
+import { Error } from "./Error";
 const Body = () => {
+    
     const [listofRestruant ,setlistofRestruant] = useState([]) 
     const [serachValue ,setSearchValue] = useState("")
     const [filteredRes,setFilteredRes] = useState([])
+    const [error, setError] = useState(null);
     useEffect(()=>{
         fetchData()
         
@@ -15,15 +18,18 @@ const Body = () => {
         try{
             let response = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=9.91850&lng=76.25580&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
             let data = await response.json();
-            setlistofRestruant(data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-            setFilteredRes(data?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-        }catch{
-            return(
-                <h1>Something Went wrong</h1>
-            )
+            console.log(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+            setlistofRestruant(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+            setFilteredRes(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+        }catch(error){
+            console.log('hi');
+            console.error('Error fetching data:', error);
+            setError('There was an error fetching the data.');
+
         }
     }
-    return listofRestruant.length===0 ?<Shimmer/> :  (
+
+    return listofRestruant.length===0 ?<Shimmer/>  :  (
         <div className="Body-container">
             <div className="filter-contaianer flex  items-center space-x-2">
                 <button onClick={function(){
@@ -33,7 +39,7 @@ const Body = () => {
                     Top rated restaurant
                 </button>
                 <div className="border border-black rounded-md  flex justify-center items-center px-1">
-                    <input onChange={(e)=>{
+                    <input onChange={(e)=>{  
                         setSearchValue(e.target.value)
                         let FilteredRes = listofRestruant.filter((resData)=>{return resData.info.name.toLowerCase().includes(serachValue.toLowerCase())})
                         setFilteredRes(FilteredRes)

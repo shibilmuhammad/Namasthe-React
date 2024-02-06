@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 const Header = () =>{
     const [loginButton,setloginButton] = useState("Login");
     return (
@@ -8,9 +9,9 @@ const Header = () =>{
             </div>
             <div className="Nav-items">
                 <ul className="flex items-center justify-center">
-                    <li>Home</li>
-                    <li>About Us</li>
-                    <li>Contact Us</li>
+                    <li><Link to={'/ '}> Home</Link></li>
+                    <li><Link to={'/about'}>About Us</Link></li>
+                    <li><Link to={'/contact'}>Contact Us</Link></li>
                     <li>Cart</li>
                     <button onClick={()=>{loginButton==='Login'?setloginButton('LogOut'):setloginButton('Login')}} className="bg-blue-100 border border-black  whitespace-nowrap px-2  py-0 mx-2 h-fit flex justify-center items-center rounded-sm">{loginButton}</button>
                 </ul>
