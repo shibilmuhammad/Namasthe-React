@@ -4,11 +4,12 @@ import { useState,useEffect } from "react";
 import { data } from "autoprefixer";
 import Shimmer from "./Shimmer"
 import { Error } from "./Error";
+import { Link } from "react-router-dom";
 const Body = () => {
     
-    const [listofRestruant ,setlistofRestruant] = useState([]) 
+    const [listOfCountry ,setListOfCountry] = useState([]) 
     const [serachValue ,setSearchValue] = useState("")
-    const [filteredRes,setFilteredRes] = useState([])
+    const [filteredCountry,setFilteredCountry] = useState([])
     const [error, setError] = useState(null);
     useEffect(()=>{
         fetchData()
@@ -16,11 +17,11 @@ const Body = () => {
     },[])
     const fetchData =   async  ()=>{
         try{
-            let response = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=9.91850&lng=76.25580&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
+            let response = await fetch("https://restcountries.com/v3.1/all")
             let data = await response.json();
-            console.log(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
-            setlistofRestruant(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-            setFilteredRes(data?.data?.cards[3]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+            console.log(data);
+            setFilteredCountry(data)    
+            setListOfCountry(data)
         }catch(error){
             console.log('hi');
             console.error('Error fetching data:', error);
@@ -29,24 +30,25 @@ const Body = () => {
         }
     }
 
-    return listofRestruant.length===0 ?<Shimmer/>  :  (
+    return listOfCountry.length===0 ?<Shimmer/>  :  (
+        
         <div className="Body-container">
             <div className="filter-contaianer flex  items-center space-x-2">
                 <button onClick={function(){
-                    let filteredRestruant =  listofRestruant.filter((element)=>element.info.avgRating>4)
-                    setFilteredRes(filteredRestruant)
+                    let filterResult =  listOfCountry.filter((element)=>element.region==="Europe")
+                    setFilteredCountry(filterResult)
                 }}  className="bg-blue-100 border border-black px-2 text-xs rounded-md py-1">
-                    Top rated restaurant
+                    Europian Countries
                 </button>
                 <div className="border border-black rounded-md  flex justify-center items-center px-1">
                     <input onChange={(e)=>{  
                         setSearchValue(e.target.value)
-                        let FilteredRes = listofRestruant.filter((resData)=>{return resData.info.name.toLowerCase().includes(serachValue.toLowerCase())})
-                        setFilteredRes(FilteredRes)
+                        let FilteredRes = listOfCountry.filter((data)=>{return data.name.common.toLowerCase().includes(serachValue.toLowerCase())})
+                        setFilteredCountry(FilteredRes)
                         }} value={serachValue} placeholder="Search here "  className="outline-none placeholder:text-xs"></input>    
                     <button onClick={()=>{
-                        let FilteredRes = listofRestruant.filter((resData)=>{return resData.info.name.toLowerCase().includes(serachValue.toLowerCase())})
-                        setFilteredRes(FilteredRes)
+                        let FilteredRes = listOfCountry.filter((data)=>{return data.name.common.toLowerCase().includes(serachValue.toLowerCase())})
+                        setFilteredCountry(FilteredRes)
                         }} className="bg-blue-100 object-contain  ">
                         <span className="material-symbols-outlined object-contain ">
                             search
@@ -56,8 +58,8 @@ const Body = () => {
             </div>
             <div className="card-container">
                 
-            {filteredRes.map((restrant)=>{
-                   return <Card key={restrant.info.id} resData={restrant}/>
+            {filteredCountry.map((data)=>{
+                   return <Link to={`/restaurant/${data.name.common}`} key={data.name.common}><Card  countryData={data}/></Link> 
                 })}
                 
             </div>
