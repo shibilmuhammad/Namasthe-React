@@ -1,20 +1,30 @@
 
-import Card from "./Card"
+import Card , {WithUnLabel} from "./Card"
 import { useState,useEffect } from "react";
 import { data } from "autoprefixer";
 import Shimmer from "./Shimmer"
 import { Error } from "./Error";
 import { Link } from "react-router-dom";
+import useOnlineStaus from "../utils/useOnileStatus";
+import { WithUnLabel } from "./Card";
 const Body = () => {
-    
     const [listOfCountry ,setListOfCountry] = useState([]) 
     const [serachValue ,setSearchValue] = useState("")
     const [filteredCountry,setFilteredCountry] = useState([])
     const [error, setError] = useState(null);
+{
+    console.log('card is equal = ',Card);
+}
+    const UNCard = WithUnLabel(Card);
+    {
+        console.log('uncard = ',UNCard);
+    }
     useEffect(()=>{
         fetchData()
         
     },[])
+    const onlineStatus = useOnlineStaus()
+   
     const fetchData =   async  ()=>{
         try{
             let response = await fetch("https://restcountries.com/v3.1/all")
@@ -28,6 +38,10 @@ const Body = () => {
             setError('There was an error fetching the data.');
 
         }
+    }
+    console.log(onlineStatus);
+    if(onlineStatus===false){
+        return <h1>Sorry you are offline ,check your internet connection and try agian</h1>
     }
 
     return listOfCountry.length===0 ?<Shimmer/>  :  (
@@ -59,7 +73,10 @@ const Body = () => {
             <div className="card-container">
                 
             {filteredCountry.map((data)=>{
-                   return <Link to={`/restaurant/${data.name.common}`} key={data.name.common}><Card  countryData={data}/></Link> 
+
+                   return<Link to={`/restaurant/${data.name.common}`} key={data.name.common}>
+                    {data.unMember ? <UNCard countryData={data}/> :<Card  countryData={data}/>} 
+                    </Link> 
                 })}
                 
             </div>

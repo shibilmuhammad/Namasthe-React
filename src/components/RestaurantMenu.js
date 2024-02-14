@@ -1,26 +1,16 @@
     import { useEffect,useState } from "react"
     import { useParams } from "react-router-dom"
 import Shimmer from "./Shimmer"
-
+import useCountryInfo from "../utils/useCountryInfo"
 
 
     const RestaurantMenu = ()=>{
        const  {id} = useParams()
-        const [countryInfo,setCountryInfo] = useState(null)
-        useEffect(()=>{
-            fetchResaurent()
-        },[])
-        const fetchResaurent =async ()=>{
-          const response =  await fetch(`https://restcountries.com/v3.1/name/${id}?fullText=true`);
-          const data =  await response.json();
-            console.log(data);
-            setCountryInfo(data[0]);
-        }
+        const countryInfo = useCountryInfo(id)
 
         if(countryInfo===null){
             return <Shimmer />
         }
-
         const{flag,area,capital,name} = countryInfo      
         return(
             <div className="m-10 space-y-2">

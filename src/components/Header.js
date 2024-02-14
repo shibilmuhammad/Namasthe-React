@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import UserContext from "../utils/UserContext";
 const Header = () =>{
     const [loginButton,setloginButton] = useState("Login");
+    const {username} = useContext(UserContext)
     return (
         <div className="Header-Container">
             <div className="Logo">
@@ -13,6 +15,7 @@ const Header = () =>{
                     <li><Link to={'/about'}>About Us</Link></li>
                     <li><Link to={'/contact'}>Contact Us</Link></li>
                     <li>Cart</li>
+                    <li className="text-green-800 text-sm font-medium">{username} </li>
                     <button onClick={()=>{loginButton==='Login'?setloginButton('LogOut'):setloginButton('Login')}} className="bg-blue-100 border border-black  whitespace-nowrap px-2  py-0 mx-2 h-fit flex justify-center items-center rounded-sm">{loginButton}</button>
                 </ul>
             </div>
